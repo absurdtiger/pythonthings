@@ -17,6 +17,8 @@
 
 # or you can use except (ExampleError, AnotherExampleError):
 # you can write multiple except blocks after try
+# ON THE SAME DAMN INDENT
+# one big problem I made was not closing int(input("") yeahh you need 2 closing brackets
 
 # if error is unspecified, any error at all will execute except
 
