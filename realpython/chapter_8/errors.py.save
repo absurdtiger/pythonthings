@@ -1,0 +1,22 @@
+# 8.6 recover from errors
+
+# listing the types of errors
+# ValueError
+# 	when the operation encounters an invalid value, such as converting a string to an integer
+# TypeError
+# 	when operation is performed on wrong value
+# 	e.g. trying to add a string and int
+# NameError
+# 	when var name hasn't been defined
+# ZeroDivisionError
+# 	when divisor is 0
+# OverflowError
+# 	when result of math is too large
+
+# if you anticipate an exception to occur, you can catch the error
+
+# or you can use except (ExampleError, AnotherExampleError):
+# you can write multiple except blocks after try
+
+# if error is unspecified, any error at all will execute except
+
