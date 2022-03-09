@@ -56,7 +56,7 @@ find libc system function in gdb with `p system` and exit() with `p exit`. you w
 - check if the string is at the location with `x/s <addr>`
 
 ## find /bin/sh in the SHELL environment variable
-- `x/s 500 $esp` to look at the stack and use eye power to find `"SHELL=/bin/sh"`
+- `x/500s $rsp` or $esp to look at the stack and use eye power to find `"SHELL=/bin/sh"`
 - the address + 6 will only give you "/bin/sh" (find the hexadecimal)
 - 
 
