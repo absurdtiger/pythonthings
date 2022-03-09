@@ -39,10 +39,26 @@ if NX is enabled, when the application is loaded into the memory, it will not al
 if PIE is not enabled, it tells the loader which virtual address to use, and the memory layout is quite static. 
 when PIE is enabled, the memory is all scrambled so one needs to find the base address to calculate the offset from there.
 
+# ret2libc
 
+<https://www.ired.team/offensive-security/code-injection-process-injection/binary-exploitation/return-to-libc-ret2libc>
 
+payload = padding + system + exit + "/bin/sh"
+- exit is the return address for system()
 
+find libc system function in gdb with `p system` and exit() with `p exit`. you want to force the program to call `system("/bin/sh")`
 
+## find /bin/sh in libc
+- find string in program with the string "/bin/sh", and libc contains that string
+- inspect the memory layout of the program with `info proc map`, and identify where libc starts
+- `strings -a -t x /lib/i386-linux-gnu/libc-2.27.so | grep "/bin/sh"` to find the offset of the string
+- add the address of libc and "/bin/sh"
+- check if the string is at the location with `x/s <addr>`
+
+## find /bin/sh in the SHELL environment variable
+- `x/s 500 $esp` to look at the stack and use eye power to find `"SHELL=/bin/sh"`
+- the address + 6 will only give you "/bin/sh" (find the hexadecimal)
+- 
 
 
 
