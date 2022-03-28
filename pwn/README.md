@@ -35,35 +35,68 @@ gdb is useful
   - most of pwn is not finding function addresses anyway unless libc
 - in the event that gdb is annoying and won't give you the offset use a diff disassembler like IDA or binaryninja
 
-## more about registers
+### more about registers
+
 **general purpose registers** are RAX, RBX, RCX, RDX, RDI, RSI, RBP, RSP, R8-15
+
 **segments** are ES, CS, SS, DS, FS
+
 **EFLAGS** are CF, PF, AF, ZF, SF,...
+
 RIP: special _instruction pointer_ and is modified as a side-effect
+
 RAX: accumulator
+
 RBX: base
+
 RCX: counter
+
 RDX: data/general
+
 RSI: source index
+
 RDI: destination index
+
 RBP: base pointer
+
 RSP: stack pointer
 
-### checksec
-- stack canary checks if a value on the stack has remained constant. if the function is not the same the program terminates
-- NX disallows segments from being both writeable or executable when loaded into memory
-- PIE changes the virtual addresses of the program and stops it from being static
-  - if PIE is enabled you need to find the base address and calculate the offset from there
-
-### null-terminating strings
+## null-terminating strings
 [1 NULL][buffer] <- compare with -> [1 NULL][unknown comparison]
+
 buffer overflow is required to overwrite the second value in the strcmp\n
 alternatively, \n
 [NULL] <- compare with -> [NULL][unknown string]
 
 
-## ROP
+# checksec
+- stack canary checks if a value on the stack has remained constant. if the function is not the same the program terminates
+- NX disallows segments from being both writeable or executable when loaded into memory
+- PIE changes the virtual addresses of the program and stops it from being static
+  - if PIE is enabled you need to find the base address and calculate the offset from there
+
+## canary
+- there are a few ways to leak the canary
+
+### format string
+- given a format string vulnerability, `%n$p` where n is the pointer offset
+- the pointer leaking is probably of the master canary, while the thing you need to keep constant is the local canary
+- you **cannot** try to overwrite the canary and then pattern search
+- to find `n`, need to use a brute force script, an example is added under [leak_canary.py](./leak_canary.py)
+- you can use IDA to find the canary location on the stack, the canary is declared as an unsigned integer, then use the ebp/rbp offset
+- you can also use IDA to find the subsequent instruction pointer address, although it may be easier to use gdb to set a breakpoint before the check stack function and then pattern search the overwrite for the eip/rip offset
+- set breakpoint with `b * <addr of funct>`
+- below is an example payload. Another example is [string0.py](./string0.py) for [string0](./string0)
+[buffer][canary][buffer][flag function]
+
+# ROP
 [buffer][ret][write "/bin/sh\x00" into memory][chain requirement for execve][syscall]
+
+## explaining the payload
+- find gadgets with `ROPgadget --binary=<binary> | grep pop, etc`
+- make a syscall by chaining assembly instructions present in the program
+- depending on the syscall, you will need to fix registers <https://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86_64/>
+- for things like strings, it needs to be written into the memory, which requires some funny pointer magic 
 
 ### rop chain to write /bin/sh into memory
 - find a `mov qword ptr` gadget
@@ -84,5 +117,5 @@ alternatively, \n
 - `x/500s $rsp` or $esp to look at the stack and use eye power to find `"SHELL=/bin/sh"`
 - the address + 6 will only give you "/bin/sh" (find the hexadecimal)
 
-## libc
+# ret2libc
 ugh
