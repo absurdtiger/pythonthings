@@ -86,7 +86,7 @@ alternatively, \n
 - you can use IDA to find the canary location on the stack, the canary is declared as an unsigned integer, then use the ebp/rbp offset
 - you can also use IDA to find the subsequent instruction pointer address, although it may be easier to use gdb to set a breakpoint before the check stack function and then pattern search the overwrite for the eip/rip offset
 - set breakpoint with `b * <addr of funct>`
-- below is an example payload. Another example is [string0.py](./string0.py) for [string0](./string0)
+- below is an example payload. Another example is [string0.py](./Overcoming_Canary/string0.py) for [string0](./Overcoming_Canary/string0)
 [buffer][canary][buffer][flag function]
 
 # ROP
@@ -97,6 +97,7 @@ alternatively, \n
 - make a syscall by chaining assembly instructions present in the program
 - depending on the syscall, you will need to fix registers <https://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86_64/>
 - for things like strings, it needs to be written into the memory, which requires some funny pointer magic 
+- best thing is to look at [this example script](./rop_example.py)
 
 ### rop chain to write /bin/sh into memory
 - find a `mov qword ptr` gadget

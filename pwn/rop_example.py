@@ -1,3 +1,5 @@
+# for DEFCON quals speedrun chall. binary not included but the concept is clear
+
 from pwn import *
 context.log_level = 'debug'
 
