@@ -70,17 +70,4 @@ def starts_with_be(flist):
         if item.startswith("be") == True:
             print(item)
         else:
-            
-
-
-
-
-
-
-
-
-
-
-
-
 
