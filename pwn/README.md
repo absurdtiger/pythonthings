@@ -82,11 +82,11 @@ alternatively, \n
 - given a format string vulnerability, `%n$p` where n is the pointer offset
 - the pointer leaking is probably of the master canary, while the thing you need to keep constant is the local canary
 - you **cannot** try to overwrite the canary and then pattern search
-- to find `n`, need to use a brute force script, an example is added under [leak_canary.py](./leak_canary.py)
+- to find `n`, need to use a brute force script, an example is added under [leak_canary.py](./Canary/leak_canary.py)
 - you can use IDA to find the canary location on the stack, the canary is declared as an unsigned integer, then use the ebp/rbp offset
 - you can also use IDA to find the subsequent instruction pointer address, although it may be easier to use gdb to set a breakpoint before the check stack function and then pattern search the overwrite for the eip/rip offset
 - set breakpoint with `b * <addr of funct>`
-- below is an example payload. Another example is [string0.py](./Overcoming_Canary/string0.py) for [string0](./Overcoming_Canary/string0)
+- below is an example payload. Another example is [string0.py](./Canary/string0.py) for [string0](./Canary/string0)
 [buffer][canary][buffer][flag function]
 
 # ROP

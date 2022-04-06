@@ -1,4 +1,4 @@
-# for DEFCON quals speedrun chall. binary not included but the concept is clear
+# for DEFCON quals speedrun chall. binary included in this directory
 
 from pwn import *
 context.log_level = 'debug'
