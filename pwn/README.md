@@ -91,6 +91,14 @@ alternatively, \n
 
 # ROP
 [buffer][ret][write "/bin/sh\x00" into memory][chain requirement for execve][syscall]
+- rdi=filename(pointer to "/bin/sh\x00")
+- rsi=0
+- rdx=0
+- rax=59 in hex(0x3b)
+- call syscall
+
+function requirement based rop:
+[buffer][ret][changing registers][function]
 
 ## explaining the payload
 - find gadgets with `ROPgadget --binary=<binary> | grep pop, etc`
