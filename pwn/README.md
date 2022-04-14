@@ -21,6 +21,7 @@ GENERAL PAYLOAD: [buffer][addr of win() or syscall]
 - int(data, base) converts data into the specified base
 - addresses can be declared as p64(0xdeadbeef) which would store it as 8-bit bytes
 - non-hex strings must be converted into base 16 strings with int(b"string", 16) before being converted to 8-bit
+- LiveOverflow uses the `struct` library to convert integers to binary strings
 
 ### Addresses
 gdb is useful
@@ -34,6 +35,7 @@ gdb is useful
 - `info function` finds function addresses but it's a bit of a dump
   - most of pwn is not finding function addresses anyway unless libc
 - in the event that gdb is annoying and won't give you the offset use a diff disassembler like IDA or binaryninja
+- test altered GOT addresses in gdb by setting breakpoints, and using `set {int} 0xaddrone=0xaddrtwo`
 
 ### more about registers
 
@@ -61,13 +63,12 @@ RBP: base pointer
 
 RSP: stack pointer
 
-## null-terminating strings
+## null-terminating strings (logic bug)
 [1 NULL][buffer] <- compare with -> [1 NULL][unknown comparison]
 
 buffer overflow is required to overwrite the second value in the strcmp\n
 alternatively, \n
 [NULL] <- compare with -> [NULL][unknown string]
-
 
 # checksec
 - stack canary checks if a value on the stack has remained constant. if the function is not the same the program terminates
@@ -81,7 +82,8 @@ alternatively, \n
 - Additional example: [string0.py](./Canary/string0.py) for [string0](./Canary/string0)
 
 ### format string
-- given a format string vulnerability, `%n$p` where n is the pointer offset
+- if a printing function takes in user-supplied data. fprintf, printf, sprintf, syslog
+- given a format string vulnerability, `%n$p` where n is the pointer offset. `%s` `%x`
 - ~~the pointer leaking is probably of the master canary, while the thing you need to keep constant is the local canary~~ Unreliable because "I was high when I said this" :eyeroll: smh
 - to find `n`, need to use a brute force script, an example is added under [leak_canary.py](./Canary/leak_canary.py)
 
@@ -128,9 +130,23 @@ function requirement based rop:
 - add the address of libc and "/bin/sh"
 - check if the string is at the location with `x/s <addr>`
 
-### find /bin/sh in the SHELL environment variable (unreliable)
-- `x/500s $rsp` or $esp to look at the stack and use eye power to find `"SHELL=/bin/sh"`
-- the address + 6 will only give you "/bin/sh" (find the hexadecimal)
-
 # ret2libc
-ugh
+### Glossary
+- GOT: Global Offsets Table
+- PLT: Procedure Linking Table
+
+## Understanding GOT
+- Certain functions call PLT, which has the address to the actual function on libc
+- in the PLT function, the first line shows where in glibc the actual function is
+- that glibc address would be in the GOT
+
+### Using GOT
+- in the event there is something like an exit() function you need to avoid (which prevents the function from returning therefore there is no rip to overwrite)
+- let's say hello() is the function you want to call
+- store addr of hello()
+- store GOT address of exit() 
+- overwrite the address in GOT to hello(). [format string example](https://www.youtube.com/watch?v=t1LH9D5cuK4)
+
+# Exploiting format string bug (FSB)
+brb\n
+<https://youtu.be/t1LH9D5cuK4?t=242>
