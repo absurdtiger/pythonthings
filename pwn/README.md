@@ -76,18 +76,24 @@ alternatively, \n
   - if PIE is enabled you need to find the base address and calculate the offset from there
 
 ## canary
+[buffer][canary][buffer][flag function]
 - there are a few ways to leak the canary
+- Additional example: [string0.py](./Canary/string0.py) for [string0](./Canary/string0)
 
 ### format string
 - given a format string vulnerability, `%n$p` where n is the pointer offset
-- the pointer leaking is probably of the master canary, while the thing you need to keep constant is the local canary
-- you **cannot** try to overwrite the canary and then pattern search
+- ~~the pointer leaking is probably of the master canary, while the thing you need to keep constant is the local canary~~ Unreliable because "I was high when I said this" :eyeroll: smh
 - to find `n`, need to use a brute force script, an example is added under [leak_canary.py](./Canary/leak_canary.py)
+
+### set breakpoint
+- in gdb, `b * <addr of stackcheck>`
+- pattern create/search
+- search canary
+
+### IDA
 - you can use IDA to find the canary location on the stack, the canary is declared as an unsigned integer, then use the ebp/rbp offset
-- you can also use IDA to find the subsequent instruction pointer address, although it may be easier to use gdb to set a breakpoint before the check stack function and then pattern search the overwrite for the eip/rip offset
-- set breakpoint with `b * <addr of funct>`
-- below is an example payload. Another example is [string0.py](./Canary/string0.py) for [string0](./Canary/string0)
-[buffer][canary][buffer][flag function]
+- you can also use IDA to find the subsequent instruction pointer address (shown as `r` most of the time)
+- using gdb would be easier
 
 # ROP
 [buffer][ret][write "/bin/sh\x00" into memory][chain requirement for execve][syscall]
