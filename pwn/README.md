@@ -147,6 +147,3 @@ function requirement based rop:
 - store GOT address of exit() 
 - overwrite the address in GOT to hello(). [format string example](https://www.youtube.com/watch?v=t1LH9D5cuK4)
 
-# Exploiting format string bug (FSB)
-brb\n
-<https://youtu.be/t1LH9D5cuK4?t=242>
