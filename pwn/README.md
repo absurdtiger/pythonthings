@@ -105,7 +105,7 @@ alternatively, \n
 - rax=59 in hex(0x3b)
 - call syscall
 
-function requirement based rop:
+ROP for calling conventions: \n
 [buffer][ret][changing registers][function]
 
 ## explaining the payload
