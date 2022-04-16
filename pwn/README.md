@@ -133,17 +133,27 @@ function requirement based rop:
 # ret2libc
 ### Glossary
 - GOT: Global Offsets Table
-- PLT: Procedure Linking Table
+- PLT: Procedure Linkage Table
 
-## Understanding GOT
-- Certain functions call PLT, which has the address to the actual function on libc
-- in the PLT function, the first line shows where in glibc the actual function is
-- that glibc address would be in the GOT
+## Understanding global function execution
+- PLT stub -> GOT -> glibc -> PLT extended
+- calling the address of GOT would return the address of that actual function in libc
 
-### Using GOT
+### When GOT writeable
 - in the event there is something like an exit() function you need to avoid (which prevents the function from returning therefore there is no rip to overwrite)
 - let's say hello() is the function you want to call
 - store addr of hello()
 - store GOT address of exit() 
 - overwrite the address in GOT to hello(). [format string example](https://www.youtube.com/watch?v=t1LH9D5cuK4)
+
+### When GOT unwriteable (NX enabled, PIE enabled, full RELRO)
+- for a print function (puts, printf) in libc called in the main program,
+- set rdi to the GOT addr
+- call the main print function
+- collect the libc addr of the print function
+- use that to search for the libc
+- test with libc using pwntools
+- one_gadget sys execve (hardcode)
+- send location of the gadget (addr + libc base)
+- win
 
