@@ -72,9 +72,11 @@ alternatively, \n
 
 # checksec
 - stack canary checks if a value on the stack has remained constant. if the function is not the same the program terminates
-- NX disallows segments from being both writeable or executable when loaded into memory
+- NX: NX for non-executable. If you change the return address by an address of the stack where you put some code, you would get a SEGFAULT. So, no shellcode on the stack.
 - PIE changes the virtual addresses of the program and stops it from being static
   - if PIE is enabled you need to find the base address and calculate the offset from there
+- Full RELRO: RELRO is for Relocation Read-Only. Linux uses ELF binary format. In this binary, functions called by the program from dependent libraries (like printf from libc) are dynamically resolved. The first time the function is called, the address is resolved. If your program has a vulnerability that makes it possible to write somewhere in the memory, you can overwrite such address by your own (or replace the address of printf by the address of the function system).
+
 
 ## canary
 [buffer][canary][buffer][flag function]
