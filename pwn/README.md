@@ -39,29 +39,18 @@ gdb is useful
 
 ### more about registers
 
-**general purpose registers** are RAX, RBX, RCX, RDX, RDI, RSI, RBP, RSP, R8-15
-
-**segments** are ES, CS, SS, DS, FS
-
-**EFLAGS** are CF, PF, AF, ZF, SF,...
-
-RIP: special _instruction pointer_ and is modified as a side-effect
-
-RAX: accumulator
-
-RBX: base
-
-RCX: counter
-
-RDX: data/general
-
-RSI: source index
-
-RDI: destination index
-
-RBP: base pointer
-
-RSP: stack pointer
+- **general purpose registers** are RAX, RBX, RCX, RDX, RDI, RSI, RBP, RSP, R8-15
+- **segments** are ES, CS, SS, DS, FS
+- **EFLAGS** are CF, PF, AF, ZF, SF,...
+- RIP: special _instruction pointer_ and is modified as a side-effect
+- RAX: accumulator
+- RBX: base
+- RCX: counter
+- RDX: data/general
+- RSI: source index
+- RDI: destination index
+- RBP: base pointer
+- RSP: stack pointer
 
 ## null-terminating strings (logic bug)
 [1 NULL][buffer] <- compare with -> [1 NULL][unknown comparison]
@@ -131,6 +120,7 @@ ROP for calling conventions: \n
 - `strings -a -t x /lib/i386-linux-gnu/libc-2.27.so | grep "/bin/sh"` to find the offset of the string
 - add the address of libc and "/bin/sh"
 - check if the string is at the location with `x/s <addr>`
+- or `ROPgadget --binary ./libc.so.6 --strings "/bin/sh"`
 
 # ret2libc
 ### Glossary
@@ -158,4 +148,3 @@ ROP for calling conventions: \n
 - one_gadget sys execve (hardcode)
 - send location of the gadget (addr + libc base)
 - win
-
