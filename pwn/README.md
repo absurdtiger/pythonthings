@@ -52,6 +52,16 @@ gdb is useful
 - RBP: base pointer
 - RSP: stack pointer
 
+### dynamic analysis with gdb
+- if the program requires code execution and values to be placed on the stack, it would need dynamic analysis to figure out the offset on the stack and stuff
+- so yes we need to use gdb attach through pwntools I cannot escape this
+```python
+from pwn import *
+context.log_level='debug'
+p = whatever
+pid = gdb.attach(p, 'b main')
+```
+
 ## null-terminating strings (logic bug)
 [1 NULL][buffer] <- compare with -> [1 NULL][unknown comparison]
 
