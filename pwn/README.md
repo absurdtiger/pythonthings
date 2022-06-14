@@ -1,7 +1,7 @@
 # All the information I organised here last time is gone. curse you inconsistent saving behaviour
 
 ## general pwn notes
-GENERAL PAYLOAD: [buffer][addr of win() or syscall] 
+GENERAL PAYLOAD: [buffer][addr of function you want to call] 
 
 ### basic idea
 - function that allows for buffer overflow (overwriting more data than it's supposed to)
@@ -33,7 +33,7 @@ gdb is useful
 - alternatively `info frame` will show you rip and whether it is overwritten
   - there's not really an easy way to find the offset from the overwritten sequence but you can still try
 - `info function` finds function addresses but it's a bit of a dump
-  - most of pwn is not finding function addresses anyway unless libc
+  - `rabin2 -R [binary]` to find function addresses and PLT addresses faster 
 - in the event that gdb is annoying and won't give you the offset use a diff disassembler like IDA or binaryninja
 - test altered GOT addresses in gdb by setting breakpoints, and using `set {int} 0xaddrone=0xaddrtwo`
 
