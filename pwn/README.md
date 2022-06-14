@@ -1,7 +1,7 @@
 # All the information I organised here last time is gone. curse you inconsistent saving behaviour
 
 ## general pwn notes
-GENERAL PAYLOAD: [buffer][addr of win() or syscall] 
+GENERAL PAYLOAD: [buffer][addr of function you want to call] 
 
 ### basic idea
 - function that allows for buffer overflow (overwriting more data than it's supposed to)
@@ -33,9 +33,10 @@ gdb is useful
 - alternatively `info frame` will show you rip and whether it is overwritten
   - there's not really an easy way to find the offset from the overwritten sequence but you can still try
 - `info function` finds function addresses but it's a bit of a dump
-  - most of pwn is not finding function addresses anyway unless libc
+  - `rabin2 -R [binary]` to find function addresses and PLT addresses faster 
 - in the event that gdb is annoying and won't give you the offset use a diff disassembler like IDA or binaryninja
 - test altered GOT addresses in gdb by setting breakpoints, and using `set {int} 0xaddrone=0xaddrtwo`
+- find strings with `rabin2 -z [binary]`
 
 ### more about registers
 
@@ -51,6 +52,16 @@ gdb is useful
 - RDI: destination index
 - RBP: base pointer
 - RSP: stack pointer
+
+### dynamic analysis with gdb
+- if the program requires code execution and values to be placed on the stack, it would need dynamic analysis to figure out the offset on the stack and stuff
+- so yes we need to use gdb attach through pwntools I cannot escape this
+```python
+from pwn import *
+context.log_level='debug'
+p = whatever
+pid = gdb.attach(p, 'b main')
+```
 
 ## null-terminating strings (logic bug)
 [1 NULL][buffer] <- compare with -> [1 NULL][unknown comparison]
