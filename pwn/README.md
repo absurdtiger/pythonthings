@@ -36,7 +36,7 @@ gdb is useful
   - `rabin2 -R [binary]` to find function addresses and PLT addresses faster 
 - in the event that gdb is annoying and won't give you the offset use a diff disassembler like IDA or binaryninja
 - test altered GOT addresses in gdb by setting breakpoints, and using `set {int} 0xaddrone=0xaddrtwo`
-- find strings with `rabin2 -z split`
+- find strings with `rabin2 -z [binary]`
 
 ### more about registers
 
