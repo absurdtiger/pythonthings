@@ -17,7 +17,7 @@ total = 0
 
 for y in range(len(inp)):
 	total += 1
-	output = program(inp[y])
+	output = str(program(inp[y]))
 	if output == answer[y]:
 		print(f"{y+1}) {inp[y]} --> {output} | {answer[y]} correct")
 		score += 1
