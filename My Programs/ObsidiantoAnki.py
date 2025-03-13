@@ -33,7 +33,7 @@ for line in file:
     continue
 
 
-print(out.join("\n"))
+print("\n".join(out))
 
 
 #if line[:2] != "- ":
