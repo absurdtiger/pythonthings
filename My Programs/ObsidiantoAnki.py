@@ -2,7 +2,7 @@ import pyinputplus as pyip
 # debug inputs
 #file = ["- ? this is a sentence", "  - this is an answer", "- stop", "- ? this is another sentence"]
 
-# take in the file
+# TODO: take in the file
 
 # check to make sure this is a note that I really want to convert since it is one-way 
 def confirm_conversion(file):
@@ -30,7 +30,8 @@ def confirm_conversion(file):
         return False
 
 def handle(line):
-    #if the line contains the delimiter, the front/back needs to be surrounded in quotes
+    # TODO
+    # if the line contains the delimiter, the front/back needs to be surrounded in quotes
     # if the line is surrounded by quotes and contains quotes, the in-card quotes needs to be double quoted
     return newline
 
